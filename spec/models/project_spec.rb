@@ -1,6 +1,35 @@
 require 'rails_helper'
 
 RSpec.describe Project, type: :model do
+
+  # validaition spec
+  describe "validation" do
+    before do
+      @user = User.create(
+        first_name: "Joe",
+        last_name: "Tester",
+        email: "a@example.com",
+        password: "asdasd"
+      )
+    end
+
+    context "when a name is present" do
+      it "project is valid" do
+        project = @user.projects.build(name: "my first spec")
+        expect(project).to be_valid
+      end
+    end
+
+    context "when a name is nil" do
+      it "project is invalid" do
+        project2 = @user.projects.new(name: nil)
+        project2.valid?
+        expect(project2.errors[:name]).to include("can't be blank")
+      end
+    end
+    
+  end
+
   # ユーザー単位では重複したプロジェクト名を許可しないこと
   it "does not allow duplicate project names per user" do
     user = User.create(
