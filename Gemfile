@@ -25,14 +25,14 @@ group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'faker', require: false # for sample data in development
+  gem 'faker', '<= 2.3.0', require: false # for sample data in development
   gem 'spring-commands-rspec'
 end
 
 group :test do
   gem 'capybara', '~> 2.15.4'
   gem 'selenium-webdriver'
-  gem 'chromedriver-helper'
+  gem 'webdrivers'
   # Or use poltergeist and PhantomJS as an alternative to Selenium/Chrome
   # gem 'poltergeist', '~> 1.15.0'
   gem 'launchy', '~> 2.4.3'
