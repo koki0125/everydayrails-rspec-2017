@@ -23,17 +23,17 @@ RSpec.describe Note, type: :model do
 
   # 文字列に一致するメッセージを検索する
   describe "search message for a term" do
-    let(:note1) { FactoryBot.create(:note,
+    let!(:note1) { FactoryBot.create(:note,
       project: project,
       user: user,
       message: "This is the first note.",
     ) }
-    let(:note2) { FactoryBot.create(:note,
+    let!(:note2) { FactoryBot.create(:note,
       project: project,
       user: user,
       message: "This is the second note.",
     ) }
-    let(:note3) { FactoryBot.create(:note,
+    let!(:note3) { FactoryBot.create(:note,
       project: project,
       user: user,
       message: "First, preheat the oven.",
