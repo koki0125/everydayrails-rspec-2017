@@ -25,12 +25,7 @@ RSpec.feature "Projects", type: :feature do
     create_project
     go_to_project "Edit"
     update_name_project
-
-    aggregate_failures do
-      expect(page).to have_content "Project was successfully updated"
-      expect(page).to have_content "Test Project2"
-      expect(page).to have_content "Owner: #{user.name}"
-    end
+    confirm_updated
   end
 
   def create_project
@@ -48,5 +43,13 @@ RSpec.feature "Projects", type: :feature do
   def update_name_project
     fill_in "Name", with: "Test Project2"
     click_button "Update Project"
+  end
+
+  def confirm_updated
+    aggregate_failures do
+      expect(page).to have_content "Project was successfully updated"
+      expect(page).to have_content "Test Project2"
+      expect(page).to have_content "Owner: #{user.name}"
+    end
   end
 end
