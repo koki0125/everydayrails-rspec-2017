@@ -12,8 +12,8 @@ RSpec.feature "Projects", type: :feature do
     fill_in "Password", with: user.password
     click_button "Log in"
 
-    exoect {
-      click_link "New project"
+    expect {
+      click_link "New Project"
       fill_in "Name", with: "the project"
       fill_in "Description", with: "trying out capybara"
       click_button "Create Project"
