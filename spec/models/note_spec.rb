@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Note, type: :model do
   let(:user) { FactoryBot.create(:user) }
@@ -19,29 +19,28 @@ RSpec.describe Note, type: :model do
     expect(note.errors[:message]).to include("can't be blank")
   end
 
+  it { is_expected.to validate_presence_of :message }
+
   describe "search message for a term" do
     let!(:note1) {
       FactoryBot.create(:note,
-        project: project,
-        user: user,
-        message: "This is the first note.",
-      )
+                        project: project,
+                        user: user,
+                        message: "This is the first note.")
     }
 
     let!(:note2) {
       FactoryBot.create(:note,
-        project: project,
-        user: user,
-        message: "This is the second note.",
-      )
+                        project: project,
+                        user: user,
+                        message: "This is the second note.")
     }
 
     let!(:note3) {
       FactoryBot.create(:note,
-        project: project,
-        user: user,
-        message: "First, preheat the oven.",
-      )
+                        project: project,
+                        user: user,
+                        message: "First, preheat the oven.")
     }
 
     context "when a match is found" do
@@ -57,5 +56,13 @@ RSpec.describe Note, type: :model do
         expect(Note.count).to eq 3
       end
     end
+  end
+
+  # 名前の取得をメモを作成したユーザーに委譲すること
+  it "delegates name to the user who created it" do
+    user = instance_double("User", name: "Fake User")
+    note = Note.new
+    allow(note).to receive(:user).and_return(user)
+    expect(note.user_name).to eq "Fake User"
   end
 end
