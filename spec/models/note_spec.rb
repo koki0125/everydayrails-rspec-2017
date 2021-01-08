@@ -1,8 +1,10 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Note, type: :model do
   let(:user) { FactoryBot.create(:user) }
   let(:project) { FactoryBot.create(:project, owner: user) }
+
+  it { is_expected.to have_attached_file(:attachement) }
 
   it "is valid with a user, project, and message" do
     note = Note.new(
@@ -22,26 +24,23 @@ RSpec.describe Note, type: :model do
   describe "search message for a term" do
     let!(:note1) {
       FactoryBot.create(:note,
-        project: project,
-        user: user,
-        message: "This is the first note.",
-      )
+                        project: project,
+                        user: user,
+                        message: "This is the first note.")
     }
 
     let!(:note2) {
       FactoryBot.create(:note,
-        project: project,
-        user: user,
-        message: "This is the second note.",
-      )
+                        project: project,
+                        user: user,
+                        message: "This is the second note.")
     }
 
     let!(:note3) {
       FactoryBot.create(:note,
-        project: project,
-        user: user,
-        message: "First, preheat the oven.",
-      )
+                        project: project,
+                        user: user,
+                        message: "First, preheat the oven.")
     }
 
     context "when a match is found" do
