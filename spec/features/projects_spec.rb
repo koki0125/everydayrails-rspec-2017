@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.feature "Projects", type: :feature do
   scenario "user creates a new project" do
