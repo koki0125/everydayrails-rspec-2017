@@ -31,26 +31,5 @@ RSpec.describe UserMailer, type: :mailer do
     end
   end
 
-  describe "パスワードリセット" do
-    before do
-      user
-    end
-
-    context "メアドのフォーマットがあっていないとき" do
-      it "メールフォーマットのバリデーションエラー" do
-        post 
-      end
-    end
-      
-    context "メアドのフォーマットがあっているとき" do
-      it "入力されたメアドが登録されていないときバリデーションエラー" do
-        
-      end
-
-      it "入力されたメアドが登録されているとき正常にメール送られる" do
-        
-      end
-    end
-  end
   
 end

@@ -33,8 +33,7 @@ RSpec.describe User, type: :model do
   end
 
   it "sends a password_reset email" do
-    allow
-    expect()
+    user = FactoryBot.create(:user)
   end
 
   # ジオコーディングを実行すること
