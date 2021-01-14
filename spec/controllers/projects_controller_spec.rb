@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe ProjectsController, type: :controller do
   describe "#index" do
@@ -110,7 +110,7 @@ RSpec.describe ProjectsController, type: :controller do
 
       it "updates a project" do
         project_params = FactoryBot.attributes_for(:project,
-          name: "New Project Name")
+                                                   name: "New Project Name")
         sign_in @user
         patch :update, params: { id: @project.id, project: project_params }
         expect(@project.reload.name).to eq "New Project Name"
@@ -122,13 +122,13 @@ RSpec.describe ProjectsController, type: :controller do
         @user = FactoryBot.create(:user)
         other_user = FactoryBot.create(:user)
         @project = FactoryBot.create(:project,
-          owner: other_user,
-          name: "Same Old Name")
+                                     owner: other_user,
+                                     name: "Same Old Name")
       end
 
       it "does not update the project" do
         project_params = FactoryBot.attributes_for(:project,
-          name: "New Name")
+                                                   name: "New Name")
         sign_in @user
         patch :update, params: { id: @project.id, project: project_params }
         expect(@project.reload.name).to eq "Same Old Name"
@@ -216,6 +216,43 @@ RSpec.describe ProjectsController, type: :controller do
         expect {
           delete :destroy, params: { id: @project.id }
         }.to_not change(Project, :count)
+      end
+    end
+  end
+
+  describe "complete" do
+    # 認証済みのユーザーとして
+    context "as an authenticated user" do
+      let!(:project) { FactoryBot.create(:project, completed: nil) }
+      before do
+        sign_in project.owner
+      end
+
+      # 成功しないプロジェクトの完了
+      describe "an unsuccessful completion" do
+        before do
+          allow_any_instance_of(Project).
+            to receive(:update_attributes).
+                 with(completed: true).
+                 and_return(false)
+        end
+
+        # プロジェクト画面にリダイレクトすること
+        it "redirects to the project page" do
+          patch :complete, params: { id: project.id }
+          expect(response).to redirect_to project_path(project)
+        end
+
+        # フラッシュを設定すること
+        it "sets the flash" do
+          patch :complete, params: { id: project.id }
+          expect(flash[:alert]).to eq "Unable to complete project."
+        end
+
+        # プロジェクトを完了済みにしないこと
+        it "doesn't mark the project as completed" do
+          expect { patch :complete, params: { id: project.id } }.to_not change(project, :completed)
+        end
       end
     end
   end
