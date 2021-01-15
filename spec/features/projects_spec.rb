@@ -5,15 +5,13 @@ RSpec.feature "Projects", type: :feature do
     @user = FactoryBot.create(:user)
     @project = FactoryBot.create(:project, name: "a project", owner: @user)
     @completed_project = FactoryBot.create(:project, :completed, name: "a completed project", owner: @user)
+    # ログインする
+    sign_in @user
+    # ルートページにいく
+    visit root_path
   end
 
   scenario "user creates a new project" do
-    # using our customer login helper:
-    # sign_in_as user
-    # or the one provided by Devise:
-    sign_in @user
-
-    visit root_path
 
     expect {
       click_link "New Project"
@@ -31,8 +29,6 @@ RSpec.feature "Projects", type: :feature do
 
   # ユーザーはプロジェクトを完了済みにする
   scenario "user completes a project" do
-    # ユーザーはログインしている
-    login_as @user, scope: :user
     # ユーザーがプロジェクト画面を開き、
     visit project_path(@project)
 
@@ -40,16 +36,16 @@ RSpec.feature "Projects", type: :feature do
     # "complete" ボタンをクリックすると、
     click_button "Complete"
     # プロジェクトは完了済みとしてマークされる
-    expect(@project.reload.completed?).to be true
-    expect(page).to have_content "Congratulations, this project is complete!"
-    expect(page).to have_content "Completed"
-    expect(page).to_not have_button "Complete"
+    aggregate_failures do
+      expect(@project.reload.completed?).to be true
+      expect(page).to have_content "Congratulations, this project is complete!"
+      expect(page).to have_content "Completed"
+      expect(page).to_not have_button "Complete"
+    end
   end
 
   # 完了したプロジェクトは表示されない
   scenario "doesn't show completed projects" do
-    login_as @user, scope: :user
-    visit root_path
     aggregate_failures do
       expect(page).to have_content @user.name
       expect(page).to have_content @project.name
@@ -61,26 +57,26 @@ RSpec.feature "Projects", type: :feature do
   # 詳細ページもクリックしたら見れる
   scenario "index and show completed projects" do
 
-    # login
-    sign_in @user
-    # go to root_path
-    visit root_path
     # push the button 'completed projects'
-    expect(page).to have_content @user.name
-    expect(page).to have_content(@project.name)
-    click_link "Completed projects"
-    # get to the new page
-    # index completed project names
-    expect(page).to have_content(@completed_project.name)
-    expect(page).to_not have_content(@project.name)
+    aggregate_failures do
+      expect(page).to have_content @user.name
+      expect(page).to have_content(@project.name)
+    
+      click_link "Completed projects"
+      # get to the new page
+      # index completed project names
+      expect(page).to have_content(@completed_project.name)
+      expect(page).to_not have_content(@project.name)
 
-    # click the project.name
-    click_link @completed_project.name
-    # show project detail
-    expect(page).to have_content(@completed_project.name)
-    expect(page).to_not have_content(@project.name)
-    expect(page).to have_content("Completed")
-    expect(page).to have_content("Tasks")
-    expect(page).to have_content("Notes")
+      # click the project.name
+      click_link @completed_project.name
+      # show project detail
+      
+      expect(page).to have_content(@completed_project.name)
+      expect(page).to_not have_content(@project.name)
+      expect(page).to have_content("Completed")
+      expect(page).to have_content("Tasks")
+      expect(page).to have_content("Notes")
+    end
   end
 end
