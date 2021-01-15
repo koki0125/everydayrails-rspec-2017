@@ -51,11 +51,8 @@ RSpec.feature "Projects", type: :feature do
     login_as @user, scope: :user
     visit root_path
     aggregate_failures do
-      # green
       expect(page).to have_content @user.name
-      # green
       expect(page).to have_content @project.name
-      # red
       expect(page).to_not have_content @completed_project.name
     end
   end
@@ -69,15 +66,19 @@ RSpec.feature "Projects", type: :feature do
     # go to root_path
     visit root_path
     # push the button 'completed projects'
-    click_link "completed projects"
+    expect(page).to have_content @user.name
+    expect(page).to have_content(@project.name)
+    click_link "Completed projects"
     # get to the new page
     # index completed project names
     expect(page).to have_content(@completed_project.name)
+    expect(page).to_not have_content(@project.name)
 
     # click the project.name
     click_link @completed_project.name
     # show project detail
     expect(page).to have_content(@completed_project.name)
+    expect(page).to_not have_content(@project.name)
     expect(page).to have_content("Completed")
     expect(page).to have_content("Tasks")
     expect(page).to have_content("Notes")

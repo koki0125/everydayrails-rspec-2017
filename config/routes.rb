@@ -1,9 +1,8 @@
 Rails.application.routes.draw do
-
-  devise_for :users, controllers: { registrations: 'registrations' }
+  devise_for :users, controllers: { registrations: "registrations" }
 
   authenticated :user do
-    root 'projects#index', as: :authenticated_root
+    root "projects#index", as: :authenticated_root
   end
 
   resources :projects do
@@ -15,11 +14,12 @@ Rails.application.routes.draw do
     end
     member do
       patch :complete
+      get :completed_index
     end
   end
 
   namespace :api do
-    resources :projects#, only: [:index, :show, :create]
+    resources :projects #, only: [:index, :show, :create]
   end
 
   root "home#index"
