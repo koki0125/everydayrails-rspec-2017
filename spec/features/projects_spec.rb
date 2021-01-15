@@ -50,7 +50,6 @@ RSpec.feature "Projects", type: :feature do
   scenario "doesn't show completed projects" do
     login_as @user, scope: :user
     visit root_path
-    puts page
     aggregate_failures do
       # green
       expect(page).to have_content @user.name
@@ -59,5 +58,28 @@ RSpec.feature "Projects", type: :feature do
       # red
       expect(page).to_not have_content @completed_project.name
     end
+  end
+
+  # root_pageの完了したのプロジェクトにページ遷移したら完了プロジェクトのみの一覧が表示されている
+  # 詳細ページもクリックしたら見れる
+  scenario "index and show completed projects" do
+
+    # login
+    sign_in @user
+    # go to root_path
+    visit root_path
+    # push the button 'completed projects'
+    click_link "completed projects"
+    # get to the new page
+    # index completed project names
+    expect(page).to have_content(@completed_project.name)
+
+    # click the project.name
+    click_link @completed_project.name
+    # show project detail
+    expect(page).to have_content(@completed_project.name)
+    expect(page).to have_content("Completed")
+    expect(page).to have_content("Tasks")
+    expect(page).to have_content("Notes")
   end
 end
