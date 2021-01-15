@@ -5,6 +5,8 @@ RSpec.describe ProjectsController, type: :controller do
     context "as an authenticated user" do
       before do
         @user = FactoryBot.create(:user)
+        @completed_project = FactoryBot.create(:project, :completed, owner: @user)
+        @project = FactoryBot.create(:project, owner: @user)
       end
 
       it "responds successfully" do
@@ -13,6 +15,20 @@ RSpec.describe ProjectsController, type: :controller do
         aggregate_failures do
           expect(response).to be_success
           expect(response).to have_http_status "200"
+        end
+      end
+
+      # 完了したプロジェクトは表示されない
+      it "doesn't show completed projects" do
+        sign_in @user
+        get :index
+        aggregate_failures do
+          # green
+          expect(response.body).to include @user.name
+          # green
+          expect(response.body).to include @project.name
+          # red
+          expect(response.body).to_not include @completed_project.name
         end
       end
     end

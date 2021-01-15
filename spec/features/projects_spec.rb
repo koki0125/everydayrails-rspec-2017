@@ -43,4 +43,6 @@ RSpec.feature "Projects", type: :feature do
     expect(page).to have_content "Completed"
     expect(page).to_not have_button "Complete"
   end
+
+  # 完了したプロジェクトは、
 end

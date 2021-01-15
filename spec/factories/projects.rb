@@ -4,6 +4,7 @@ FactoryBot.define do
     description "A test project."
     due_on 1.week.from_now
     association :owner
+    completed nil
 
     trait :with_notes do
       after(:create) { |project| create_list(:note, 5, project: project) }
@@ -23,6 +24,10 @@ FactoryBot.define do
 
     trait :invalid do
       name nil
+    end
+
+    trait :completed do
+      completed true
     end
 
     # Factory inheritance examples ...
