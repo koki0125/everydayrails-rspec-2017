@@ -17,20 +17,6 @@ RSpec.describe ProjectsController, type: :controller do
           expect(response).to have_http_status "200"
         end
       end
-
-      # 完了したプロジェクトは表示されない
-      it "doesn't show completed projects" do
-        sign_in @user
-        get :index
-        aggregate_failures do
-          # green
-          expect(response.body).to include @user.name
-          # green
-          expect(response.body).to include @project.name
-          # red
-          expect(response.body).to_not include @completed_project.name
-        end
-      end
     end
 
     context "as a guest" do
@@ -265,7 +251,7 @@ RSpec.describe ProjectsController, type: :controller do
           expect(flash[:alert]).to eq "Unable to complete project."
         end
 
-        # プロジェクトを完了済みにしないこと
+        # プロジェクトを完了済み���しないこと
         it "doesn't mark the project as completed" do
           expect { patch :complete, params: { id: project.id } }.to_not change(project, :completed)
         end

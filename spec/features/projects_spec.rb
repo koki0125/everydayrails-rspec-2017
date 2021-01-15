@@ -1,12 +1,17 @@
 require "rails_helper"
 
 RSpec.feature "Projects", type: :feature do
+  before do
+    @user = FactoryBot.create(:user)
+    @project = FactoryBot.create(:project, name: "a project", owner: @user)
+    @completed_project = FactoryBot.create(:project, :completed, name: "a completed project", owner: @user)
+  end
+
   scenario "user creates a new project" do
-    user = FactoryBot.create(:user)
     # using our customer login helper:
     # sign_in_as user
     # or the one provided by Devise:
-    sign_in user
+    sign_in @user
 
     visit root_path
 
@@ -19,30 +24,40 @@ RSpec.feature "Projects", type: :feature do
       aggregate_failures do
         expect(page).to have_content "Project was successfully created"
         expect(page).to have_content "Test Project"
-        expect(page).to have_content "Owner: #{user.name}"
+        expect(page).to have_content "Owner: #{@user.name}"
       end
-    }.to change(user.projects, :count).by(1)
+    }.to change(@user.projects, :count).by(1)
   end
 
   # ユーザーはプロジェクトを完了済みにする
   scenario "user completes a project" do
-    # プロジェクトを持ったユーザーを準備する
-    user = FactoryBot.create(:user)
-    project = FactoryBot.create(:project, owner: user)
     # ユーザーはログインしている
-    login_as user, scope: :user
+    login_as @user, scope: :user
     # ユーザーがプロジェクト画面を開き、
-    visit project_path(project)
+    visit project_path(@project)
 
     expect(page).to_not have_content "Completed"
     # "complete" ボタンをクリックすると、
     click_button "Complete"
     # プロジェクトは完了済みとしてマークされる
-    expect(project.reload.completed?).to be true
+    expect(@project.reload.completed?).to be true
     expect(page).to have_content "Congratulations, this project is complete!"
     expect(page).to have_content "Completed"
     expect(page).to_not have_button "Complete"
   end
 
-  # 完了したプロジェクトは、
+  # 完了したプロジェクトは表示されない
+  scenario "doesn't show completed projects" do
+    login_as @user, scope: :user
+    visit root_path
+    puts page
+    aggregate_failures do
+      # green
+      expect(page).to have_content @user.name
+      # green
+      expect(page).to have_content @project.name
+      # red
+      expect(page).to_not have_content @completed_project.name
+    end
+  end
 end
